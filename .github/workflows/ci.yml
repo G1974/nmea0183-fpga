@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sim:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Verilator
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator
+          verilator --version
+
+      - name: Lint
+        run: make -C sim lint
+
+      - name: Random test
+        run: make -C sim test N=2000
+
+      - name: Overflow test
+        run: make -C sim test_ovf
+
+      - name: Seeds regression
+        run: make -C sim regress
+
+      - name: Keep logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-logs
+          path: sim/*.log
+
+  fpga:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install open source tools
+        run: |
+          pip install yowasp-yosys yowasp-nextpnr-himbaechel-gowin apycula
+          curl -sSL -o sv2v.zip https://github.com/zachjs/sv2v/releases/latest/download/sv2v-Linux.zip
+          unzip -q sv2v.zip
+          sudo cp sv2v-Linux/sv2v /usr/local/bin/
+
+      - name: Build bitstream for Tang Nano 4K
+        run: make -C fpga YOSYS=yowasp-yosys NEXTPNR=yowasp-nextpnr-himbaechel-gowin
+
+      - name: Upload bitstream
+        uses: actions/upload-artifact@v4
+        with:
+          name: nmea0183_filter-tangnano4k
+          path: fpga/nmea0183_filter.fs
