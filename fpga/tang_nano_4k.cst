@@ -1,0 +1,20 @@
+// Tang Nano 4K pin constraints for tang_nano_4k_top
+// Part: GW1NSR-LV4CQN48PC7/I6 (some boards: GW1NSR-LV4CQN48PC6/I5)
+
+// 27 MHz oscillator
+IO_LOC  "clk_27m" 45;
+IO_PORT "clk_27m" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// button KEY (1.8V bank), active low -> reset
+IO_LOC  "key_n" 15;
+IO_PORT "key_n" IO_TYPE=LVCMOS18 PULL_MODE=UP BANK_VCCIO=1.8;
+
+// onboard LED
+IO_LOC  "led" 10;
+IO_PORT "led" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+
+// NMEA in / out on the header, 3.3V TTL levels only
+IO_LOC  "nmea_rx" 40;
+IO_PORT "nmea_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC  "nmea_tx" 39;
+IO_PORT "nmea_tx" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
